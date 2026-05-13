@@ -5,4 +5,5 @@ public class Registro {
     public String placaTrator;
     public double litros;
     public String destino;
+    // Teste
 }
