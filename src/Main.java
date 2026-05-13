@@ -12,6 +12,9 @@ public class Main {
     static Trator[] frota = new Trator[30];
     static int totalTratores = 0;
 
+    static Registro[] registros = new Registro[200];
+    static int totalRegistros = 0;
+
     static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -31,7 +34,7 @@ public class Main {
 
             switch (opcao) {
                 case 1: menuCadastros(); break;
-                case 2: System.out.println("(Encontro 2)"); break;
+                case 2: registrarColheita(); break;
                 case 3: System.out.println("(Encontro 3)"); break;
                 case 4: System.out.println("Encerrando..."); break;
                 default: System.out.println("Opcao invalida!");
@@ -112,5 +115,98 @@ public class Main {
         frota[totalTratores] = tr;
         totalTratores++;
         System.out.println("Trator cadastrado!");
+    }
+
+    static void registrarColheita() {
+        if (totalRegistros >= registros.length) {
+            System.out.println("Limite de registros atingido!");
+            return;
+        }
+
+        Registro r = new Registro();
+
+        System.out.print("Data: ");
+        scanner.nextLine();
+        r.data = scanner.nextLine();
+
+    // 🔍 FUNCIONÁRIO
+        System.out.print("Matricula do funcionario: ");
+        int mat = scanner.nextInt();
+
+        boolean encontrouFuncionario = false;
+        for (int i = 0; i < totalFuncionarios; i++) {
+            if (equipe[i].matricula == mat) {
+                encontrouFuncionario = true;
+                break;
+            }
+        }
+
+        if (!encontrouFuncionario) {
+            System.out.println("Funcionario nao encontrado!");
+            return;
+        }
+
+        r.matriculaFuncionario = mat;
+
+    // 🔍 TALHÃO
+        System.out.print("Codigo do talhao: ");
+        int cod = scanner.nextInt();
+
+        boolean encontrouTalhao = false;
+        for (int i = 0; i < totalTalhoes; i++) {
+            if (talhoes[i].codigo == cod) {
+                encontrouTalhao = true;
+                break;
+            }
+        }
+
+        if (!encontrouTalhao) {
+            System.out.println("Talhao nao encontrado!");
+            return;
+        }
+
+        r.codigoTalhao = cod;
+
+    // 🔍 TRATOR
+        scanner.nextLine();
+        System.out.print("Placa do trator: ");
+        String placa = scanner.nextLine();
+
+        Trator tratorEncontrado = null;
+        for (int i = 0; i < totalTratores; i++) {
+            if (frota[i].placa.equals(placa)) {
+                tratorEncontrado = frota[i];
+                break;
+            }
+        }
+
+        if (tratorEncontrado == null) {
+            System.out.println("Trator nao encontrado!");
+            return;
+        }
+
+        r.placaTrator = placa;
+
+    // 📦 LITROS
+        System.out.print("Quantidade de litros: ");
+        double litros = scanner.nextDouble();
+
+        if (litros > tratorEncontrado.capacidadeMaxima) {
+            System.out.println("Capacidade do trator excedida!");
+            return;
+        }
+
+        r.litros = litros;
+
+    // 📍 DESTINO
+        scanner.nextLine();
+        System.out.print("Destino (Terreiro/Secador): ");
+        r.destino = scanner.nextLine();
+
+    // ✅ SALVAR
+        registros[totalRegistros] = r;
+        totalRegistros++;
+
+        System.out.println("Registro realizado com sucesso!");
     }
 }
