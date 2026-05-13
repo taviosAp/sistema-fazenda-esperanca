@@ -2,7 +2,6 @@ import java.util.Scanner;
 
 public class Main {
 
-    // Arrays para guardar os dados na memória
     static Funcionario[] equipe = new Funcionario[100];
     static int totalFuncionarios = 0;
 
@@ -125,14 +124,13 @@ public class Main {
 
         Registro r = new Registro();
 
-        System.out.print("Data: ");
         scanner.nextLine();
+        System.out.print("Data: ");
         r.data = scanner.nextLine();
 
-    // 🔍 FUNCIONÁRIO
+        // FUNCIONÁRIO
         System.out.print("Matricula do funcionario: ");
         int mat = scanner.nextInt();
-
         boolean encontrouFuncionario = false;
         for (int i = 0; i < totalFuncionarios; i++) {
             if (equipe[i].matricula == mat) {
@@ -140,18 +138,15 @@ public class Main {
                 break;
             }
         }
-
         if (!encontrouFuncionario) {
             System.out.println("Funcionario nao encontrado!");
             return;
         }
-
         r.matriculaFuncionario = mat;
 
-    // 🔍 TALHÃO
+        // TALHÃO
         System.out.print("Codigo do talhao: ");
         int cod = scanner.nextInt();
-
         boolean encontrouTalhao = false;
         for (int i = 0; i < totalTalhoes; i++) {
             if (talhoes[i].codigo == cod) {
@@ -159,19 +154,16 @@ public class Main {
                 break;
             }
         }
-
         if (!encontrouTalhao) {
             System.out.println("Talhao nao encontrado!");
             return;
         }
-
         r.codigoTalhao = cod;
 
-    // 🔍 TRATOR
+        // TRATOR
         scanner.nextLine();
         System.out.print("Placa do trator: ");
         String placa = scanner.nextLine();
-
         Trator tratorEncontrado = null;
         for (int i = 0; i < totalTratores; i++) {
             if (frota[i].placa.equals(placa)) {
@@ -179,34 +171,33 @@ public class Main {
                 break;
             }
         }
-
         if (tratorEncontrado == null) {
             System.out.println("Trator nao encontrado!");
             return;
         }
-
         r.placaTrator = placa;
 
-    // 📦 LITROS
+        // LITROS
         System.out.print("Quantidade de litros: ");
         double litros = scanner.nextDouble();
-
         if (litros > tratorEncontrado.capacidadeMaxima) {
             System.out.println("Capacidade do trator excedida!");
             return;
         }
-
         r.litros = litros;
 
-    // 📍 DESTINO
+        // DESTINO
         scanner.nextLine();
         System.out.print("Destino (Terreiro/Secador): ");
         r.destino = scanner.nextLine();
+        if (!r.destino.equals("Terreiro") && !r.destino.equals("Secador")) {
+            System.out.println("ERRO: Destino invalido! Digite Terreiro ou Secador.");
+            return;
+        }
 
-    // ✅ SALVAR
+        // SALVAR
         registros[totalRegistros] = r;
         totalRegistros++;
-
         System.out.println("Registro realizado com sucesso!");
     }
 }
