@@ -79,10 +79,23 @@ public class Main {
         System.out.print("Matricula: ");
         f.matricula = scanner.nextInt();
         scanner.nextLine();
+
+        // VERIFICA MATRICULA DUPLICADA
+        for (int i = 0; i < totalFuncionarios; i++) {
+            if (equipe[i].matricula == f.matricula) {
+                System.out.println("ERRO: Ja existe um funcionario com essa matricula!");
+                return;
+            }
+        }
+
         System.out.print("Nome: ");
         f.nome = scanner.nextLine();
         System.out.print("Tipo (Diarista/Fixo): ");
         f.tipoContrato = scanner.nextLine();
+        while (!f.tipoContrato.equals("Diarista") && !f.tipoContrato.equals("Fixo")) {
+            System.out.print("Invalido! Digite Diarista ou Fixo: ");
+            f.tipoContrato = scanner.nextLine();
+        }
         equipe[totalFuncionarios] = f;
         totalFuncionarios++;
         salvarDados();
@@ -98,6 +111,15 @@ public class Main {
         System.out.print("Codigo: ");
         t.codigo = scanner.nextInt();
         scanner.nextLine();
+
+        // VERIFICA CODIGO DUPLICADO
+        for (int i = 0; i < totalTalhoes; i++) {
+            if (talhoes[i].codigo == t.codigo) {
+                System.out.println("ERRO: Ja existe um talhao com esse codigo!");
+                return;
+            }
+        }
+
         System.out.print("Nome: ");
         t.nome = scanner.nextLine();
         System.out.print("Variedade: ");
@@ -119,6 +141,15 @@ public class Main {
         scanner.nextLine();
         System.out.print("Placa: ");
         tr.placa = scanner.nextLine();
+
+        // VERIFICA PLACA DUPLICADA
+        for (int i = 0; i < totalTratores; i++) {
+            if (frota[i].placa.equals(tr.placa)) {
+                System.out.println("ERRO: Ja existe um trator com essa placa!");
+                return;
+            }
+        }
+
         System.out.print("Capacidade maxima (litros): ");
         tr.capacidadeMaxima = scanner.nextDouble();
         frota[totalTratores] = tr;
@@ -215,25 +246,25 @@ public class Main {
 
     static void salvarDados() {
         try {
-            FileWriter fw = new FileWriter("funcionarios.txt");
+            FileWriter fw = new FileWriter("src/funcionarios.txt");
             for (int i = 0; i < totalFuncionarios; i++) {
                 fw.write(equipe[i].matricula + ";" + equipe[i].nome + ";" + equipe[i].tipoContrato + "\n");
             }
             fw.close();
 
-            fw = new FileWriter("talhoes.txt");
+            fw = new FileWriter("src/talhoes.txt");
             for (int i = 0; i < totalTalhoes; i++) {
                 fw.write(talhoes[i].codigo + ";" + talhoes[i].nome + ";" + talhoes[i].variedade + ";" + talhoes[i].estimativaProducao + "\n");
             }
             fw.close();
 
-            fw = new FileWriter("tratores.txt");
+            fw = new FileWriter("src/tratores.txt");
             for (int i = 0; i < totalTratores; i++) {
                 fw.write(frota[i].placa + ";" + frota[i].capacidadeMaxima + "\n");
             }
             fw.close();
 
-            fw = new FileWriter("registros.txt");
+            fw = new FileWriter("src/registros.txt");
             for (int i = 0; i < totalRegistros; i++) {
                 fw.write(registros[i].data + ";" + registros[i].matriculaFuncionario + ";" + registros[i].codigoTalhao + ";" + registros[i].placaTrator + ";" + registros[i].litros + ";" + registros[i].destino + "\n");
             }
@@ -246,7 +277,7 @@ public class Main {
 
     static void carregarDados() {
         try {
-            BufferedReader br = new BufferedReader(new FileReader("funcionarios.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("src/funcionarios.txt"));
             String linha;
             while ((linha = br.readLine()) != null) {
                 String[] partes = linha.split(";");
@@ -263,7 +294,7 @@ public class Main {
         }
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader("talhoes.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("src/talhoes.txt"));
             String linha;
             while ((linha = br.readLine()) != null) {
                 String[] partes = linha.split(";");
@@ -281,7 +312,7 @@ public class Main {
         }
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader("tratores.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("src/tratores.txt"));
             String linha;
             while ((linha = br.readLine()) != null) {
                 String[] partes = linha.split(";");
@@ -297,7 +328,7 @@ public class Main {
         }
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader("registros.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("src/registros.txt"));
             String linha;
             while ((linha = br.readLine()) != null) {
                 String[] partes = linha.split(";");
