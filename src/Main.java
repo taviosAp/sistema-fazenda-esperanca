@@ -1,4 +1,8 @@
 import java.util.Scanner;
+import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class Main {
 
@@ -17,6 +21,7 @@ public class Main {
     static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+        carregarDados();
         menuPrincipal();
     }
 
@@ -35,7 +40,10 @@ public class Main {
                 case 1: menuCadastros(); break;
                 case 2: registrarColheita(); break;
                 case 3: System.out.println("(Encontro 3)"); break;
-                case 4: System.out.println("Encerrando..."); break;
+                case 4:
+                    salvarDados();
+                    System.out.println("Encerrando...");
+                    break;
                 default: System.out.println("Opcao invalida!");
             }
         } while (opcao != 4);
@@ -77,6 +85,7 @@ public class Main {
         f.tipoContrato = scanner.nextLine();
         equipe[totalFuncionarios] = f;
         totalFuncionarios++;
+        salvarDados();
         System.out.println("Funcionario cadastrado!");
     }
 
@@ -97,6 +106,7 @@ public class Main {
         t.estimativaProducao = scanner.nextDouble();
         talhoes[totalTalhoes] = t;
         totalTalhoes++;
+        salvarDados();
         System.out.println("Talhao cadastrado!");
     }
 
@@ -113,6 +123,7 @@ public class Main {
         tr.capacidadeMaxima = scanner.nextDouble();
         frota[totalTratores] = tr;
         totalTratores++;
+        salvarDados();
         System.out.println("Trator cadastrado!");
     }
 
@@ -198,6 +209,111 @@ public class Main {
         // SALVAR
         registros[totalRegistros] = r;
         totalRegistros++;
+        salvarDados();
         System.out.println("Registro realizado com sucesso!");
+    }
+
+    static void salvarDados() {
+        try {
+            FileWriter fw = new FileWriter("funcionarios.txt");
+            for (int i = 0; i < totalFuncionarios; i++) {
+                fw.write(equipe[i].matricula + ";" + equipe[i].nome + ";" + equipe[i].tipoContrato + "\n");
+            }
+            fw.close();
+
+            fw = new FileWriter("talhoes.txt");
+            for (int i = 0; i < totalTalhoes; i++) {
+                fw.write(talhoes[i].codigo + ";" + talhoes[i].nome + ";" + talhoes[i].variedade + ";" + talhoes[i].estimativaProducao + "\n");
+            }
+            fw.close();
+
+            fw = new FileWriter("tratores.txt");
+            for (int i = 0; i < totalTratores; i++) {
+                fw.write(frota[i].placa + ";" + frota[i].capacidadeMaxima + "\n");
+            }
+            fw.close();
+
+            fw = new FileWriter("registros.txt");
+            for (int i = 0; i < totalRegistros; i++) {
+                fw.write(registros[i].data + ";" + registros[i].matriculaFuncionario + ";" + registros[i].codigoTalhao + ";" + registros[i].placaTrator + ";" + registros[i].litros + ";" + registros[i].destino + "\n");
+            }
+            fw.close();
+
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar dados!");
+        }
+    }
+
+    static void carregarDados() {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("funcionarios.txt"));
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                String[] partes = linha.split(";");
+                Funcionario f = new Funcionario();
+                f.matricula = Integer.parseInt(partes[0]);
+                f.nome = partes[1];
+                f.tipoContrato = partes[2];
+                equipe[totalFuncionarios] = f;
+                totalFuncionarios++;
+            }
+            br.close();
+        } catch (IOException e) {
+            System.out.println("Nenhum dado de funcionarios encontrado.");
+        }
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("talhoes.txt"));
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                String[] partes = linha.split(";");
+                Talhao t = new Talhao();
+                t.codigo = Integer.parseInt(partes[0]);
+                t.nome = partes[1];
+                t.variedade = partes[2];
+                t.estimativaProducao = Double.parseDouble(partes[3]);
+                talhoes[totalTalhoes] = t;
+                totalTalhoes++;
+            }
+            br.close();
+        } catch (IOException e) {
+            System.out.println("Nenhum dado de talhoes encontrado.");
+        }
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("tratores.txt"));
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                String[] partes = linha.split(";");
+                Trator tr = new Trator();
+                tr.placa = partes[0];
+                tr.capacidadeMaxima = Double.parseDouble(partes[1]);
+                frota[totalTratores] = tr;
+                totalTratores++;
+            }
+            br.close();
+        } catch (IOException e) {
+            System.out.println("Nenhum dado de tratores encontrado.");
+        }
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("registros.txt"));
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                String[] partes = linha.split(";");
+                Registro r = new Registro();
+                r.data = partes[0];
+                r.matriculaFuncionario = Integer.parseInt(partes[1]);
+                r.codigoTalhao = Integer.parseInt(partes[2]);
+                r.placaTrator = partes[3];
+                r.litros = Double.parseDouble(partes[4]);
+                r.destino = partes[5];
+                registros[totalRegistros] = r;
+                totalRegistros++;
+            }
+            br.close();
+        } catch (IOException e) {
+            System.out.println("Nenhum dado de registros encontrado.");
+        }
     }
 }
