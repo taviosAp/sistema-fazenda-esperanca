@@ -39,7 +39,7 @@ public class Main {
             switch (opcao) {
                 case 1: menuCadastros(); break;
                 case 2: registrarColheita(); break;
-                case 3: System.out.println("(Encontro 3)"); break;
+                case 3: menuRelatorios(); break;
                 case 4:
                     salvarDados();
                     System.out.println("Encerrando...");
@@ -56,18 +56,43 @@ public class Main {
             System.out.println("1. Cadastrar Funcionario");
             System.out.println("2. Cadastrar Talhao");
             System.out.println("3. Cadastrar Trator");
-            System.out.println("4. Voltar");
-            System.out.print("Escolha: ");
+            System.out.println("4. Remover Cadastro");
+            System.out.println("5. Voltar");
             opcao = scanner.nextInt();
 
             switch (opcao) {
                 case 1: cadastrarFuncionario(); break;
                 case 2: cadastrarTalhao(); break;
                 case 3: cadastrarTrator(); break;
+                case 4: menuRemover(); break;
+                case 5: System.out.println("Voltando..."); break;
+                default: System.out.println("Opcao invalida!");
+            }
+        } while (opcao != 5);
+    }
+
+    static void menuRemover() {
+        int op;
+
+        do {
+            System.out.println("\n=== REMOVER CADASTRO ===");
+            System.out.println("1. Remover Funcionario");
+            System.out.println("2. Remover Talhao");
+            System.out.println("3. Remover Trator");
+            System.out.println("4. Voltar");
+            System.out.print("Escolha: ");
+
+            op = scanner.nextInt();
+
+            switch (op) {
+                case 1: removerFuncionario(); break;
+                case 2: removerTalhao(); break;
+                case 3: removerTrator(); break;
                 case 4: System.out.println("Voltando..."); break;
                 default: System.out.println("Opcao invalida!");
             }
-        } while (opcao != 4);
+
+        } while (op != 4);
     }
 
     static void cadastrarFuncionario() {
@@ -102,6 +127,63 @@ public class Main {
         System.out.println("Funcionario cadastrado!");
     }
 
+    static void relatorioFuncionarios() {
+        System.out.println("\n=== PRODUCAO POR FUNCIONARIO ===");
+
+        for (int i = 0; i < totalFuncionarios; i++) {
+            double total = 0;
+
+            for (int j = 0; j < totalRegistros; j++) {
+                if (registros[j].matriculaFuncionario == equipe[i].matricula) {
+                    total += registros[j].litros;
+                }
+            }
+
+            System.out.println(equipe[i].nome + " -> " + total + " litros");
+        }
+    }
+
+    static void removerFuncionario() {
+        if (totalFuncionarios == 0) {
+            System.out.println("Nao ha funcionarios cadastrados!");
+            return;
+        }
+
+        System.out.print("Digite a matricula do funcionario: ");
+        int mat = scanner.nextInt();
+
+        int pos = -1;
+
+        for (int i = 0; i < totalFuncionarios; i++) {
+            if (equipe[i].matricula == mat) {
+                pos = i;
+                break;
+            }
+        }
+
+        if (pos == -1) {
+            System.out.println("Funcionario nao encontrado!");
+            return;
+        }
+
+        // Verifica se tem registro
+        for (int i = 0; i < totalRegistros; i++) {
+            if (registros[i].matriculaFuncionario == mat) {
+                System.out.println("ERRO: Funcionario possui registros!");
+                return;
+            }
+        }
+
+        for (int i = pos; i < totalFuncionarios - 1; i++) {
+            equipe[i] = equipe[i + 1];
+        }
+
+        totalFuncionarios--;
+        salvarDados();
+
+        System.out.println("Funcionario removido!");
+    }
+
     static void cadastrarTalhao() {
         if (totalTalhoes >= talhoes.length) {
             System.out.println("Limite atingido!");
@@ -132,6 +214,63 @@ public class Main {
         System.out.println("Talhao cadastrado!");
     }
 
+    static void relatorioTalhoes() {
+        System.out.println("\n=== PRODUCAO POR TALHAO ===");
+
+        for (int i = 0; i < totalTalhoes; i++) {
+            double total = 0;
+
+            for (int j = 0; j < totalRegistros; j++) {
+                if (registros[j].codigoTalhao == talhoes[i].codigo) {
+                    total += registros[j].litros;
+                }
+            }
+
+            System.out.println(talhoes[i].nome + " -> " + total + " litros");
+        }
+    }
+
+    static void removerTalhao() {
+        if (totalTalhoes == 0) {
+            System.out.println("Nao ha talhoes cadastrados!");
+            return;
+        }
+
+        System.out.print("Digite o codigo do talhao: ");
+        int cod = scanner.nextInt();
+
+        int pos = -1;
+
+        for (int i = 0; i < totalTalhoes; i++) {
+            if (talhoes[i].codigo == cod) {
+                pos = i;
+                break;
+            }
+        }
+
+        if (pos == -1) {
+            System.out.println("Talhao nao encontrado!");
+            return;
+        }
+
+        // Verifica se tem registro
+        for (int i = 0; i < totalRegistros; i++) {
+            if (registros[i].codigoTalhao == cod) {
+                System.out.println("ERRO: Talhao possui registros!");
+                return;
+            }
+        }
+
+        for (int i = pos; i < totalTalhoes - 1; i++) {
+            talhoes[i] = talhoes[i + 1];
+        }
+
+        totalTalhoes--;
+        salvarDados();
+
+        System.out.println("Talhao removido!");
+    }
+
     static void cadastrarTrator() {
         if (totalTratores >= frota.length) {
             System.out.println("Limite atingido!");
@@ -156,6 +295,66 @@ public class Main {
         totalTratores++;
         salvarDados();
         System.out.println("Trator cadastrado!");
+    }
+
+    static void relatorioDestino() {
+        System.out.println("\n=== TERREIRO VS SECADOR ===");
+
+        double terreiro = 0;
+        double secador = 0;
+
+        for (int i = 0; i < totalRegistros; i++) {
+            if (registros[i].destino.equals("Terreiro")) {
+                terreiro += registros[i].litros;
+            } else if (registros[i].destino.equals("Secador")) {
+                secador += registros[i].litros;
+            }
+        }
+
+        System.out.println("Terreiro: " + terreiro + " litros");
+        System.out.println("Secador: " + secador + " litros");
+    }
+
+    static void removerTrator() {
+        if (totalTratores == 0) {
+            System.out.println("Nao ha tratores cadastrados!");
+            return;
+        }
+
+        scanner.nextLine();
+        System.out.print("Digite a placa do trator: ");
+        String placa = scanner.nextLine();
+
+        int pos = -1;
+
+        for (int i = 0; i < totalTratores; i++) {
+            if (frota[i].placa.equals(placa)) {
+                pos = i;
+                break;
+            }
+        }
+
+        if (pos == -1) {
+            System.out.println("Trator nao encontrado!");
+            return;
+        }
+
+        // Verifica se tem registro
+        for (int i = 0; i < totalRegistros; i++) {
+            if (registros[i].placaTrator.equals(placa)) {
+                System.out.println("ERRO: Trator possui registros!");
+                return;
+            }
+        }
+
+        for (int i = pos; i < totalTratores - 1; i++) {
+            frota[i] = frota[i + 1];
+        }
+
+        totalTratores--;
+        salvarDados();
+
+        System.out.println("Trator removido!");
     }
 
     static void registrarColheita() {
@@ -276,6 +475,10 @@ public class Main {
     }
 
     static void carregarDados() {
+        totalFuncionarios = 0;
+        totalTalhoes = 0;
+        totalTratores = 0;
+        totalRegistros = 0;
         try {
             BufferedReader br = new BufferedReader(new FileReader("src/funcionarios.txt"));
             String linha;
@@ -346,5 +549,29 @@ public class Main {
         } catch (IOException e) {
             System.out.println("Nenhum dado de registros encontrado.");
         }
+    }
+    
+    static void menuRelatorios() {
+        int op;
+
+        do {
+            System.out.println("\n=== RELATORIOS ===");
+            System.out.println("1. Producao por funcionario");
+            System.out.println("2. Producao por talhao");
+            System.out.println("3. Terreiro vs Secador");
+            System.out.println("4. Voltar");
+            System.out.print("Escolha: ");
+
+            op = scanner.nextInt();
+
+            switch (op) {
+                case 1: relatorioFuncionarios(); break;
+                case 2: relatorioTalhoes(); break;
+                case 3: relatorioDestino(); break;
+                case 4: System.out.println("Voltando..."); break;
+                default: System.out.println("Opcao invalida!");
+            }
+
+        } while (op != 4);
     }
 }
